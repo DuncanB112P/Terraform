@@ -30,3 +30,14 @@ variable "bucket_name" {
   type    = string
   default = "jenkins-bucket-spd-12022023"
 }
+
+variable "environment" {
+  description = "Environment for deployment"
+  type = string
+  default = "dev"
+}
+
+variable "my_ip" {
+  type    = string
+  default = "174.104.215.173/32"
+}
