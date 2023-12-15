@@ -9,7 +9,7 @@ terraform {
       version = "3.1.0"
     }
     http = {
-      source = "hashicorp/http"
+      source  = "hashicorp/http"
       version = "2.1.0"
     }
     local = {
@@ -17,7 +17,7 @@ terraform {
       version = "2.1.0"
     }
     tls = {
-      source = "hashicorp/tls"
+      source  = "hashicorp/tls"
       version = "4.0.5"
     }
   }
@@ -203,7 +203,7 @@ resource "aws_instance" "ubuntu_server" {
   ami                         = data.aws_ami.ubuntu_22_04.id
   instance_type               = "t2.micro"
   subnet_id                   = aws_subnet.public_subnets["public_subnet_1"].id
-  security_groups             = [aws_security_group.ingress-ssh.id, aws_security_group.vpc-web.id] 
+  security_groups             = [aws_security_group.ingress-ssh.id, aws_security_group.vpc-web.id]
   associate_public_ip_address = true
   key_name                    = aws_key_pair.generated.key_name
   connection {
@@ -219,16 +219,16 @@ resource "aws_instance" "ubuntu_server" {
   lifecycle {
     ignore_changes = [security_groups]
   }
-  
+
   provisioner "local-exec" {
     command = "chmod 600 ${local_file.private_key_pem.filename}"
   }
-  
+
   provisioner "remote-exec" {
-  inline = [
-    "sudo rm -rf /tmp",
-    "sudo git clone https://github.com/hashicorp/demo-terraform-101 /tmp",
-    "sudo sh /tmp/assets/setup-web.sh",
+    inline = [
+      "sudo rm -rf /tmp",
+      "sudo git clone https://github.com/hashicorp/demo-terraform-101 /tmp",
+      "sudo sh /tmp/assets/setup-web.sh",
     ]
   }
 
@@ -352,11 +352,39 @@ resource "aws_key_pair" "generated" {
 }
 
 module "server" {
-  source          = "./server"
-  ami             = data.aws_ami.ubuntu_22_04.id
-  subnet_id       = aws_subnet.public_subnets["public_subnet_3"].id
+  source    = "./modules/server"
+  ami       = data.aws_ami.ubuntu_22_04.id
+  subnet_id = aws_subnet.public_subnets["public_subnet_3"].id
+  size      = "t2.micro"
   security_groups = [
     aws_security_group.ingress-ssh.id,
     aws_security_group.vpc-web.id
   ]
+}
+
+module "server_subnet1" {
+  source          = "./modules/web_server"
+  ami             = data.aws_ami.ubuntu_22_04.id
+  key_name        = aws_key_pair.generated.key_name
+  user            = "ubuntu"
+  private_key     = tls_private_key.generated.private_key_pem
+  subnet_id       = aws_subnet.public_subnets["public_subnet_1"].id
+  security_groups = [aws_security_group.ingress-ssh.id, aws_security_group.vpc-web.id]
+}
+
+output "public_ip" {
+  value = module.server.public_ip
+}
+
+output "public_dns" {
+  value = module.server.public_dns
+}
+
+output "size" {
+  value = module.server.size
+}
+
+module "s3-bucket" {
+  source  = "terraform-aws-modules/s3-bucket/aws"
+  version = "3.15.1"
 }
