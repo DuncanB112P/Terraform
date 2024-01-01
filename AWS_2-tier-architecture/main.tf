@@ -29,6 +29,7 @@ module "web_ec2" {
   source            = "./modules/ec2"
   web_sg_id         = module.web_security_group.web_sg_id
   public_subnet1_id = module.custom_vpc.public_subnet1_id
+  public_subnet2_id = module.custom_vpc.public_subnet2_id
 }
 
 

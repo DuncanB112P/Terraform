@@ -40,7 +40,7 @@ variable "private_subnet2_cidr" {
 }
 
 
-###################  PRIVATE subnet cider Availability Zones  #################
+###################  PRIVATE subnet Availability Zones  #######################
 
 variable "private_subnet1_az" {
   default = "us-east-1a"

@@ -18,3 +18,5 @@ variable "key_name" {
 variable "web_sg_id" {}
 
 variable "public_subnet1_id" {}
+
+variable "public_subnet2_id" {}
