@@ -13,7 +13,7 @@ resource "aws_instance" "web_server1" {
 resource "aws_instance" "web_server2" {
   ami                    = var.ami
   instance_type          = var.ec2_type
-  subnet_id              = var.public_subnet1_id
+  subnet_id              = var.public_subnet2_id
   vpc_security_group_ids = [var.web_sg_id]
   key_name               = var.key_name
   tags = {
