@@ -1,8 +1,8 @@
 terraform {
-  required_providers {
+    required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "5.30.0"
+      version = "4.9.0"
     }
     random = {
       source  = "hashicorp/random"
@@ -23,11 +23,10 @@ terraform {
   }
 }
 
-
-# Configure the AWS Provider
 provider "aws" {
   region = "us-east-1"
 }
+
 
 #Retrieve the list of AZs in the current AWS region
 data "aws_availability_zones" "available" {}
